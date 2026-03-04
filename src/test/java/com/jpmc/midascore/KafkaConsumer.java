@@ -8,11 +8,6 @@ import org.springframework.stereotype.Component;
 public class KafkaConsumer {
 
 
-    @KafkaListener(topics = {"${general.kafka-topic}"},groupId = "com.jpmc")
-    public void consume(Transaction quote){
-        System.out.println("I Received " + quote);
-
-    }
 
     @KafkaListener(topics = {"${general.kafka-topic}"},groupId = "com.jpmc")
     public void consume(String quote){

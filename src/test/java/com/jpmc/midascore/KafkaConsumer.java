@@ -13,6 +13,8 @@ public class KafkaConsumer {
         @KafkaListener(topics = {"${general.kafka-topic}"},groupId = "com.jpmc")
         public void consume(String quote){
             System.out.println("I Received " + quote);
+            //There's a bug somewhere below:
+            /*
             String[] transactionData = quote.split(", ");
             Transaction transaction = new Transaction(
                             Long.parseLong(transactionData[0]),
@@ -20,22 +22,11 @@ public class KafkaConsumer {
                             Float.parseFloat(transactionData[2])
                     );
 
-
+*/
         }
 
 
 
-    //The following seems to be better practice than above. Figure out how to make it work before final submission.
-    /*
-    @KafkaListener(topics = {"${general.kafka-topic}"}, groupId = "com.jpmc")
-    public void listen(ConsumerRecord<String, Transaction> record) {
-        Transaction transaction = record.value();
-        System.out.println("I Received " +transaction);
-
-
-
-    }
-    */
 
 
 }

@@ -16,4 +16,9 @@ public class DatabaseConduit {
         userRepository.save(userRecord);
     }
 
+    ////my code:
+    public UserRecord findById(long id){
+    return this.userRepository.findById(id);
+    }
+
 }

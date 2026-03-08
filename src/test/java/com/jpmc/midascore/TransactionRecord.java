@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import org.springframework.data.repository.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -59,9 +60,11 @@ public class TransactionRecord {
 
 }
 
+@Component
 interface TransactionRecordRepository extends Repository<TransactionRecord, Long> {
 
     TransactionRecord save(TransactionRecord person);
 
     Optional<TransactionRecord> findById(long id);
+    Optional<TransactionRecord> findBySenderID(long senderID);
 }

@@ -6,12 +6,16 @@ import com.jpmc.midascore.repository.TransactionRecordRepository;
 import com.jpmc.midascore.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class DatabaseConduit {
     private final UserRepository userRepository;
     private final TransactionRecordRepository transactionRecordRepository;
 
-    public DatabaseConduit(UserRepository userRepository, TransactionRecordRepository transactionRecordRepository) {
+    public DatabaseConduit(UserRepository userRepository,
+                           TransactionRecordRepository transactionRecordRepository) {
         this.userRepository = userRepository;
         this.transactionRecordRepository = transactionRecordRepository;
     }
@@ -30,6 +34,10 @@ public class DatabaseConduit {
     public UserRecord getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("UserRecord not found with id " + id));
+    }
+
+    public Iterable<TransactionRecord> getAllTransactionRecords() {
+        return transactionRecordRepository.findAll();
     }
 
 }

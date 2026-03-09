@@ -16,4 +16,10 @@ public class DatabaseConduit {
         userRepository.save(userRecord);
     }
 
+
+    public UserRecord getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("UserRecord not found with id " + id));
+    }
+
 }

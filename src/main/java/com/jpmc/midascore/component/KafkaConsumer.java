@@ -43,6 +43,7 @@ public class KafkaConsumer {
         System.out.println(sender.getName() + " sends " + recipient.getName() + " " + amount + " from balance of " + sender.getBalance());
         System.out.println("New balance for "+ sender.getName() + ": "+sender.getBalance());
         System.out.println("New balance for "+ recipient.getName() + ": "+recipient.getBalance());
+        service.save(transactionRecord);
 
     }
 
@@ -71,9 +72,11 @@ public class KafkaConsumer {
 
 
     private final DatabaseConduit service;
+    //private final TransactionDBConduit tdbc;
 
     public KafkaConsumer(DatabaseConduit service) {
         this.service = service;
+        //this.tdbc = tdbc;
     }
 
     @GetMapping("/{id}")

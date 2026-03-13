@@ -3,13 +3,15 @@ package com.jpmc.midascore.component;
 import com.jpmc.midascore.entity.TransactionRecord;
 import com.jpmc.midascore.entity.UserRecord;
 import com.jpmc.midascore.foundation.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class KafkaConsumer {
@@ -29,18 +31,24 @@ public class KafkaConsumer {
 
         TransactionRecord transactionRecord = new TransactionRecord(transaction);
         if (validateTransaction(transactionRecord)) {
+            Incentive incentive = incentiveService.getIncentive(transaction);
+            float incentiveAmount = incentive.getAmount();
+            transactionRecord.setIncentiveAmount(incentiveAmount);
             completeTransaction(transactionRecord);
+            //post validated Transaction object to Incentives API
+
         }
 
 
     }
 
     private void completeTransaction(TransactionRecord transactionRecord) {
+        float incentiveAmount = transactionRecord.getIncentiveAmount();
         UserRecord sender = getUserRecordById(transactionRecord.getSenderId());
         UserRecord recipient = getUserRecordById(transactionRecord.getRecipientId());
         float amount = transactionRecord.getAmount();
-        sender.setBalance(sender.getBalance() - amount);
-        recipient.setBalance(recipient.getBalance() + amount);
+        sender.setBalance(sender.getBalance() - amount);//Put incentives here
+        recipient.setBalance(recipient.getBalance() + amount+incentiveAmount);
         service.save(sender);
         service.save(recipient);
         System.out.println(sender.getName() + " sends " + recipient.getName() + " " + amount + " from balance of " + sender.getBalance());
@@ -79,6 +87,10 @@ public class KafkaConsumer {
     }
 
 
+    @Autowired
+    private IncentiveService incentiveService;
+
+
     private final DatabaseConduit service;
 
     public KafkaConsumer(DatabaseConduit service) {
@@ -99,3 +111,46 @@ public class KafkaConsumer {
 
 
 }
+
+
+@Service
+class IncentiveService {
+
+
+    private final RestTemplate restTemplate;
+
+    private static final String INCENTIVE_API_URL =
+            "http://localhost:8080/incentive";
+
+    public IncentiveService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    public Incentive getIncentive(Transaction transaction) {
+
+        ResponseEntity<Incentive> response =
+                restTemplate.postForEntity(
+                        INCENTIVE_API_URL,
+                        transaction,
+                        Incentive.class
+                );
+
+        return response.getBody();
+    }
+}
+
+class Incentive {
+
+    private float amount;
+
+    public Incentive() {}
+
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
+}
+

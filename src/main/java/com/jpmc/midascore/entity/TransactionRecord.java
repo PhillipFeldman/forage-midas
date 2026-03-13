@@ -18,6 +18,8 @@ public class TransactionRecord {
     private long recipientId;
     @Column(nullable = false)
     private float amount;
+    @Column(nullable = false)
+    private float incentiveAmount;
 
     public TransactionRecord(Transaction transaction){
     this.senderId = transaction.getSenderId();
@@ -34,6 +36,10 @@ public class TransactionRecord {
     public float getAmount(){
     return amount;
     }
+    public float getIncentiveAmount(){
+        return incentiveAmount;
+    }
+    public void setIncentiveAmount(float incentiveAmount) { this.incentiveAmount = incentiveAmount; }
 
 
     @Override

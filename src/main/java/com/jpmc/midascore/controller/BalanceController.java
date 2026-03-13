@@ -1,4 +1,4 @@
-package com.jpmc.midascore.component;
+package com.jpmc.midascore.controller;
 
 import com.jpmc.midascore.entity.UserRecord;
 import com.jpmc.midascore.foundation.Balance;
